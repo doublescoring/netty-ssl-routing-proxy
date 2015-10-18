@@ -1,0 +1,36 @@
+{
+  "host": "localhost",
+  "port": 443,
+  "keyStore": "server.jks",
+  "keyAlias": "server",
+  "password": "password",
+  "trustStore": "truststore.jks",
+  "routingRule": {
+    "@name": "com.doublescoring.netty.proxy.config.rules.ChainingRoutingRule",
+    "rules": [
+      {
+        "@name": "com.doublescoring.netty.proxy.config.rules.X509SubjectContainsStringRoutingRule",
+        "target": {
+          "host": "localhost",
+          "port": 123
+        },
+        "pattern": "match"
+      },
+      {
+        "@name": "com.doublescoring.netty.proxy.config.rules.IntermediateCertificateRoutingRule",
+        "target": {
+          "host": "localhost",
+          "port": 456
+        },
+        "caSubject": "CN=test.example.com"
+      },
+      {
+        "@name": "com.doublescoring.netty.proxy.config.rules.ExplicitRoutingRule",
+        "target": {
+          "host": "localhost",
+          "port": 789
+        }
+      }
+    ]
+  }
+}

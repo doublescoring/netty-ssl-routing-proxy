@@ -7,7 +7,6 @@ import com.doublescoring.netty.proxy.config.rules.ExplicitRoutingRule;
 import com.doublescoring.netty.proxy.config.rules.IntermediateCertificateRoutingRule;
 import com.doublescoring.netty.proxy.config.rules.X509SubjectContainsStringRoutingRule;
 import com.doublescoring.netty.proxy.config.ssl.BouncyCastleSslKeyMaterialSource;
-import com.doublescoring.netty.proxy.config.ssl.SslContextConfiguration;
 import com.doublescoring.netty.proxy.config.ssl.SslKeyMaterialSource;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
@@ -65,9 +64,7 @@ public class NettySslRoutingProxyTest {
 		int targetServerPort = getRandomPort();
 		SslKeyMaterialSource ca = new BouncyCastleSslKeyMaterialSource("ca.example.com");
 		final NettySslRoutingProxyConfig config = TestNettySslRoutingProxyConfig.create()
-				.withSslContextConfiguration(new SslContextConfiguration()
-						.withSource(new BouncyCastleSslKeyMaterialSource("server.example.com", ca))
-						.withClientAuth(true))
+				.withSslKeyMaterialSource(new BouncyCastleSslKeyMaterialSource("server.example.com", ca))
 				.withRoutingRule(new ExplicitRoutingRule(new RoutingTarget(LOCALHOST, targetServerPort)));
 
 		final String prefix = "<request>";
@@ -116,10 +113,8 @@ public class NettySslRoutingProxyTest {
 		int targetServerPortFirst = getRandomPort();
 		int targetServerPortSecond = getRandomPort();
 		final NettySslRoutingProxyConfig config = TestNettySslRoutingProxyConfig.create()
-				.withSslContextConfiguration(new SslContextConfiguration()
-						.withSource(new BouncyCastleSslKeyMaterialSource("server.example.com", ca))
-						.withTrustedCertificate(ca.getCertificateChain()[0])
-						.withClientAuth(true))
+				.withSslKeyMaterialSource(new BouncyCastleSslKeyMaterialSource("server.example.com", ca))
+				.withTrustedCertificate(ca.getCertificateChain()[0])
 				.withRoutingRule(
 						new ChainingRoutingRule(
 								new X509SubjectContainsStringRoutingRule(
@@ -204,11 +199,9 @@ public class NettySslRoutingProxyTest {
 		int targetServerPortFirst = getRandomPort();
 		int targetServerPortSecond = getRandomPort();
 		final NettySslRoutingProxyConfig config = TestNettySslRoutingProxyConfig.create()
-				.withSslContextConfiguration(new SslContextConfiguration()
-						.withSource(new BouncyCastleSslKeyMaterialSource("server.example.com", ca))
-						.withTrustedCertificate(ca.getCertificateChain()[0])
-						.withTrustedCertificate(intermediateCa.getCertificateChain()[0])
-						.withClientAuth(true))
+				.withSslKeyMaterialSource(new BouncyCastleSslKeyMaterialSource("server.example.com", ca))
+				.withTrustedCertificate(ca.getCertificateChain()[0])
+				.withTrustedCertificate(intermediateCa.getCertificateChain()[0])
 				.withRoutingRule(
 						new ChainingRoutingRule(
 								new IntermediateCertificateRoutingRule(

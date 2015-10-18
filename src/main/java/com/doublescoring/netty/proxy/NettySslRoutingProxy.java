@@ -1,7 +1,7 @@
 package com.doublescoring.netty.proxy;
 
 import com.doublescoring.netty.proxy.config.NettySslRoutingProxyConfig;
-import com.doublescoring.netty.proxy.config.YmlNettySslRoutingProxyConfig;
+import com.doublescoring.netty.proxy.config.JsonNettySslRoutingProxyConfig;
 import com.doublescoring.netty.proxy.server.NettySslRoutingProxyInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -42,12 +42,11 @@ public class NettySslRoutingProxy {
 			bossGroup.shutdownGracefully();
 			workerGroup.shutdownGracefully();
 		}
-
 	}
 
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws Exception {
 		logger.info("Starting Netty SSL routing proxy");
-		start(new YmlNettySslRoutingProxyConfig(args[1]));
+		start(JsonNettySslRoutingProxyConfig.parse(args[1]));
 		logger.info("Netty SSL routing proxy configured");
 	}
 }

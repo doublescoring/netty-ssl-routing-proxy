@@ -3,6 +3,8 @@ package com.doublescoring.netty.proxy.config.rules;
 import com.doublescoring.netty.proxy.config.RoutingContext;
 import com.doublescoring.netty.proxy.config.RoutingRule;
 import com.doublescoring.netty.proxy.config.RoutingTarget;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.security.cert.X509Certificate;
 import java.util.Objects;
@@ -15,7 +17,9 @@ public class IntermediateCertificateRoutingRule implements RoutingRule {
 	private final RoutingTarget target;
 	private final String caSubject;
 
-	public IntermediateCertificateRoutingRule(RoutingTarget target, String caSubject) {
+	@JsonCreator
+	public IntermediateCertificateRoutingRule(@JsonProperty("target") RoutingTarget target,
+											  @JsonProperty("caSubject") String caSubject) {
 		this.target = Objects.requireNonNull(target);
 		this.caSubject = Objects.requireNonNull(caSubject);
 	}
@@ -30,5 +34,13 @@ public class IntermediateCertificateRoutingRule implements RoutingRule {
 			}
 		}
 		return Optional.empty();
+	}
+
+	public String getCaSubject() {
+		return caSubject;
+	}
+
+	public RoutingTarget getTarget() {
+		return target;
 	}
 }

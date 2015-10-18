@@ -41,7 +41,7 @@ public class BouncyCastleSslKeyMaterialSource implements SslKeyMaterialSource {
 	}
 
 	/**
-	 * Generates self-sifned certificate with custom CN
+	 * Generates self-signed certificate with custom CN
 	 */
 	public BouncyCastleSslKeyMaterialSource(String fqdn) throws Exception {
 		this(fqdn, null, null);
@@ -105,10 +105,5 @@ public class BouncyCastleSslKeyMaterialSource implements SslKeyMaterialSource {
 	@Override
 	public PrivateKey getPrivateKey() {
 		return key;
-	}
-
-	@Override
-	public String getPassword() {
-		return "";
 	}
 }

@@ -10,6 +10,4 @@ public interface SslKeyMaterialSource {
 	X509Certificate[] getCertificateChain();
 
 	PrivateKey getPrivateKey();
-
-	String getPassword();
 }

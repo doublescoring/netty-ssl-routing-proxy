@@ -3,6 +3,8 @@ package com.doublescoring.netty.proxy.config.rules;
 import com.doublescoring.netty.proxy.config.RoutingContext;
 import com.doublescoring.netty.proxy.config.RoutingRule;
 import com.doublescoring.netty.proxy.config.RoutingTarget;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -14,7 +16,9 @@ public class X509SubjectContainsStringRoutingRule implements RoutingRule {
 	private final RoutingTarget target;
 	private final String pattern;
 
-	public X509SubjectContainsStringRoutingRule(RoutingTarget target, String pattern) {
+	@JsonCreator
+	public X509SubjectContainsStringRoutingRule(@JsonProperty("target") RoutingTarget target,
+												@JsonProperty("pattern") String pattern) {
 		this.target = Objects.requireNonNull(target);
 		this.pattern = Objects.requireNonNull(pattern);
 	}
@@ -29,5 +33,13 @@ public class X509SubjectContainsStringRoutingRule implements RoutingRule {
 		} else {
 			return Optional.empty();
 		}
+	}
+
+	public String getPattern() {
+		return pattern;
+	}
+
+	public RoutingTarget getTarget() {
+		return target;
 	}
 }
