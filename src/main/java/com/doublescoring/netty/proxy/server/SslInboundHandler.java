@@ -26,17 +26,8 @@ public class SslInboundHandler extends ChannelInboundHandlerAdapter {
 	}
 
 	@Override
-	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-		logger.info("Channel registered!");
-		SslHandler sslHandler = Objects.requireNonNull(ctx.pipeline().get(SslHandler.class));
-		logger.error(sslHandler.engine().getSession().getCipherSuite());
-		super.channelRegistered(ctx);
-	}
-
-	@Override
 	public void channelActive(final ChannelHandlerContext ctx) throws Exception {
 		super.channelActive(ctx);
-		logger.info("Channel active!");
 		SslHandler sslHandler = Objects.requireNonNull(ctx.pipeline().get(SslHandler.class));
 		sslHandler.handshakeFuture().addListener(future -> {
 			if (future.isSuccess()) {
