@@ -46,7 +46,7 @@ public class NettySslRoutingProxy {
 
 	public static void main(String[] args) throws Exception {
 		logger.info("Starting Netty SSL routing proxy");
-		start(JsonNettySslRoutingProxyConfig.parse(args[1]));
+		start(JsonNettySslRoutingProxyConfig.parse(args[0]));
 		logger.info("Netty SSL routing proxy configured");
 	}
 }

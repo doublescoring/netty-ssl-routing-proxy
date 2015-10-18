@@ -7,6 +7,9 @@
 	<groupId>com.doublescoring</groupId>
 	<artifactId>netty-ssl-routing-proxy</artifactId>
 	<version>1.0-SNAPSHOT</version>
+	<properties>
+		<os.detected.classifier.package>${os.detected.classifier}</os.detected.classifier.package>
+	</properties>
 
 	<dependencies>
 		<dependency>
@@ -19,6 +22,13 @@
 			<artifactId>netty-tcnative</artifactId>
 			<version>1.1.33.Fork9</version>
 			<classifier>${os.detected.classifier}</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-tcnative</artifactId>
+			<version>1.1.33.Fork9</version>
+			<classifier>${os.detected.classifier.package}</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -54,6 +64,15 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>docker</id>
+			<properties>
+				<os.detected.classifier.package>linux-x86_64</os.detected.classifier.package>
+			</properties>
+		</profile>
+	</profiles>
+
 	<build>
 		<extensions>
 			<extension>
@@ -73,18 +92,49 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>com.doublescoring.netty.proxy.NettySslRoutingProxy</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<minimizeJar>false</minimizeJar>
+							<shadedArtifactAttached>true</shadedArtifactAttached>
+							<shadedClassifierName>shaded</shadedClassifierName>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
 				<version>0.3.5</version>
 				<configuration>
 					<imageName>${project.name}</imageName>
 					<baseImage>java:8-jre</baseImage>
-					<entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+					<entryPoint>["java", "-jar", "/opt/${project.build.finalName}-shaded.jar", "/etc/netty-ssl-routing-proxy.conf"]</entryPoint>
 					<resources>
 						<resource>
-							<targetPath>/</targetPath>
+							<targetPath>/opt/</targetPath>
 							<directory>${project.build.directory}</directory>
-							<include>${project.build.finalName}.jar</include>
+							<include>${project.build.finalName}-shaded.jar</include>
 						</resource>
 					</resources>
 				</configuration>

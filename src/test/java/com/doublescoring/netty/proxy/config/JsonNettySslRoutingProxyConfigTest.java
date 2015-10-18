@@ -20,7 +20,7 @@ public class JsonNettySslRoutingProxyConfigTest {
 				JsonNettySslRoutingProxyConfigTest.class.getResource("config.json").getPath(),
 				new File(JsonNettySslRoutingProxyConfigTest.class.getResource("config.json").getPath()).getParentFile());
 		assertEquals(443, config.getBindPort());
-		assertEquals("localhost", config.getBindHost());
+		assertEquals("0.0.0.0", config.getBindHost());
 		assertNotNull(config.getRoutingRule());
 		assertEquals(ChainingRoutingRule.class, config.getRoutingRule().getClass());
 		ChainingRoutingRule chain = (ChainingRoutingRule) config.getRoutingRule();
