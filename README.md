@@ -20,9 +20,32 @@ The command will build docker image _netty-ssl-routing-proxy_.
 
 See example [config.json](https://github.com/doublescoring/netty-ssl-routing-proxy/blob/master/src/test/resources/com/doublescoring/netty/proxy/config/config.json)
 
+The path to the files "keyStore" and "trustStore" must be absolute. For example, if the keys store in the "/etc/keys/", config should be:
+```
+"keyStore": "/etc/keys/server.jks",
+"keyAlias": "server",
+"password": "password",
+"trustStore": "/etc/keys/truststore.jks",
+```
+
 Routing conditions supported:
 * Certificate subject substring matching (e.g. _OU=SERVICE-NAME_)
 * Specific intermediate certificate in client certificate chain
+
+### Intermediate certificate
+Routing using an intermediate certificate, you must fully specify the Issuer from the certificate in "caSubject".
+For example, if the certificate issuer is  "Issuer: CN=ca.test.com, OU=test.com, O=test.com, L=Moscow, ST=Moscow, C=RU", the rule should be:
+```
+"rules": [
+    {
+      "@name": "com.doublescoring.netty.proxy.config.rules.IntermediateCertificateRoutingRule",
+      "target": {
+        "host": "localhost",
+        "port": 1234
+      },
+      "caSubject": "CN=ca.test.com, OU=test.com, O=test.com, L=Moscow, ST=Moscow, C=RU"
+    }]
+```
 
 ## Usage
 
