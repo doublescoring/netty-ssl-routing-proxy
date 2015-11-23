@@ -5,6 +5,7 @@ import com.doublescoring.netty.proxy.config.JsonNettySslRoutingProxyConfig;
 import com.doublescoring.netty.proxy.server.NettySslRoutingProxyInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -25,6 +26,8 @@ public class NettySslRoutingProxy {
 		return new ServerBootstrap()
 				.group(bossGroup, workerGroup)
 				.channel(NioServerSocketChannel.class)
+				.option(ChannelOption.TCP_NODELAY, true)
+				.option(ChannelOption.SO_KEEPALIVE, true)
 				.handler(new LoggingHandler(NettySslRoutingProxy.class, LogLevel.INFO))
 				.childHandler(new NettySslRoutingProxyInitializer(config))
 				.bind(config.getBindHost(), config.getBindPort())

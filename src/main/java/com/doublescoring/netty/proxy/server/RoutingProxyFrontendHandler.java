@@ -35,6 +35,8 @@ public class RoutingProxyFrontendHandler extends ChannelInboundHandlerAdapter {
 		bootstrap.group(inboundChannel.eventLoop())
 				.channel(ctx.channel().getClass())
 				.handler(new RoutingProxyBackendHandler(inboundChannel))
+				.option(ChannelOption.TCP_NODELAY, true)
+				.option(ChannelOption.SO_KEEPALIVE, true)
 				.option(ChannelOption.AUTO_READ, false);
 
 		final ChannelFuture f = bootstrap.connect(routingTarget.getHost(), routingTarget.getPort());
