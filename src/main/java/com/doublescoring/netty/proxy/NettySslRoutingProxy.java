@@ -1,7 +1,7 @@
 package com.doublescoring.netty.proxy;
 
-import com.doublescoring.netty.proxy.config.NettySslRoutingProxyConfig;
 import com.doublescoring.netty.proxy.config.JsonNettySslRoutingProxyConfig;
+import com.doublescoring.netty.proxy.config.NettySslRoutingProxyConfig;
 import com.doublescoring.netty.proxy.server.NettySslRoutingProxyInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;

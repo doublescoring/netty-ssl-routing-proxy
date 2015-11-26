@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Proxy connection handler. Writes all data from the client to the target server channel.
@@ -21,6 +22,8 @@ public class RoutingProxyFrontendHandler extends ChannelInboundHandlerAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(RoutingProxyFrontendHandler.class);
 
 	private volatile Channel outboundChannel;
+
+	private final ConcurrentLinkedQueue queue = new ConcurrentLinkedQueue();
 
 	/**
 	 * Creates connection to the target server. Has to be called before channelRead.
@@ -41,12 +44,26 @@ public class RoutingProxyFrontendHandler extends ChannelInboundHandlerAdapter {
 
 		final ChannelFuture f = bootstrap.connect(routingTarget.getHost(), routingTarget.getPort());
 		outboundChannel = f.channel();
+		queue.clear();
 		f.addListener(future -> {
-			if (future.isSuccess()) {
-				inboundChannel.read();
-			} else {
-				logger.error("Connection attemp has failed");
-				inboundChannel.close();
+			try {
+				if (future.isSuccess()) {
+					while (!queue.isEmpty()) {
+						outboundChannel.writeAndFlush(queue.poll()).addListener((ChannelFuture ft) -> {
+							if (ft.isSuccess()) {
+								ctx.channel().read();
+							} else {
+								ft.channel().close();
+							}
+						});
+					}
+					inboundChannel.read();
+				} else {
+					logger.error("Connection attemp has failed");
+					inboundChannel.close();
+				}
+			} finally {
+				queue.clear();
 			}
 		});
 	}
@@ -61,6 +78,8 @@ public class RoutingProxyFrontendHandler extends ChannelInboundHandlerAdapter {
 					 future.channel().close();
 				 }
 			});
+		} else {
+			queue.add(msg);
 		}
 	}
 
